@@ -1,0 +1,19 @@
+{
+	"name": "db-kit.query",
+	"version": "0.1.0",
+	"description": "db-kit query builder",
+	"main": "index.js",
+	"devDependencies": {
+		"mocha": "1.20.x",
+		"chai": "1.9.x"
+	},
+	"scripts": {
+		"test": "mocha -R spec"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/noosxe/db-kit.query.git"
+	},
+	"author": "Levon Kirakosyan <noosx.e@gmail.com> (http://noosxe.com)",
+	"license": "MIT"
+}
