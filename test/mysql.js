@@ -265,6 +265,21 @@ describe('query.mysql', function() {
 
 	});
 
+	describe('#truncate()', function() {
+
+		it('should set query type to "truncate"', function() {
+			expect(query('User').truncate()._type)
+			.to.be.equal('truncate');
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.truncate())
+			.to.be.equal(q);
+		});
+
+	});
+
 	describe('#toString()', function() {
 
 		it('should return sql for "select *"', function() {
@@ -325,6 +340,10 @@ describe('query.mysql', function() {
 
 		it('should return sql for "dropTable" with ifExists', function() {
 			expect(query('User').ifExists().dropTable().toString()).to.be.equal('DROP TABLE IF EXISTS `User`');
+		});
+
+		it('should return sql for "truncate"', function() {
+			expect(query('User').truncate().toString()).to.be.equal('TRUNCATE TABLE `User`');
 		});
 
 		it('should throw an exception when no query type is specified', function() {
