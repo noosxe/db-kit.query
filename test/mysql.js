@@ -235,6 +235,21 @@ describe('query.mysql', function() {
 
 	});
 
+	describe('#ifNotExists()', function() {
+
+		it('should set ._ifNotExists to true', function() {
+			expect(query('User').ifNotExists()._ifNotExists)
+			.to.be.true;
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.ifNotExists())
+			.to.be.equal(q);
+		});
+
+	});
+
 	describe('#dropTable()', function() {
 
 		it('should set query type to "dropTable"', function() {
