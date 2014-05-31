@@ -225,6 +225,16 @@ describe('query.mysql', function() {
 			.to.be.equal('INSERT INTO `User` (`id`,`email`) VALUES(1,"example@example.com"),(2,"second@example.com")');
 		});
 
+		it('should return sql for "update"', function() {
+			expect(query('User').update({ email: 'example@example.com' }).toString())
+			.to.be.equal('UPDATE `User` SET `email` = "example@example.com"');
+		});
+
+		it('should return sql for "update" with LIMIT', function() {
+			expect(query('User').limit(10).update({ email: 'example@example.com' }).toString())
+			.to.be.equal('UPDATE `User` SET `email` = "example@example.com" LIMIT 10');
+		});
+
 		it('should throw an exception when no query type is specified', function() {
 			var q = query('User');
 			expect(q.toString.bind(q)).to.throw(Error);
