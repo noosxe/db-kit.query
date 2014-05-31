@@ -220,6 +220,36 @@ describe('query.mysql', function() {
 
 	});
 
+	describe('#ifExists()', function() {
+
+		it('should set ._ifExists to true', function() {
+			expect(query('User').ifExists()._ifExists)
+			.to.be.true;
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.ifExists())
+			.to.be.equal(q);
+		});
+
+	});
+
+	describe('#dropTable()', function() {
+
+		it('should set query type to "dropTable"', function() {
+			expect(query('User').dropTable()._type)
+			.to.be.equal('dropTable');
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.dropTable())
+			.to.be.equal(q);
+		});
+
+	});
+
 	describe('#toString()', function() {
 
 		it('should return sql for "select *"', function() {
@@ -272,6 +302,14 @@ describe('query.mysql', function() {
 		it('should return sql for "update" with LIMIT', function() {
 			expect(query('User').limit(10).update({ email: 'example@example.com' }).toString())
 			.to.be.equal('UPDATE `User` SET `email` = "example@example.com" LIMIT 10');
+		});
+
+		it('should return sql for "dropTable"', function() {
+			expect(query('User').dropTable().toString()).to.be.equal('DROP TABLE `User`');
+		});
+
+		it('should return sql for "dropTable" with ifExists', function() {
+			expect(query('User').ifExists().dropTable().toString()).to.be.equal('DROP TABLE IF EXISTS `User`');
 		});
 
 		it('should throw an exception when no query type is specified', function() {
