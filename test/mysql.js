@@ -166,4 +166,30 @@ describe('query.mysql', function() {
 
 	});
 
+	describe('#offset()', function() {
+
+		it('should set .offset variable', function() {
+			expect(query('User').offset(10)._offset).to.be.equal(10);
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.offset(10)).to.be.equal(q);
+		});
+
+	});
+
+	describe('#limit()', function() {
+
+		it('should set .limit variable', function() {
+			expect(query('User').limit(10)._limit).to.be.equal(10);
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.limit(10)).to.be.equal(q);
+		});
+
+	});
+
 });
