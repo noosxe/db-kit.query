@@ -206,7 +206,26 @@ describe('query.mysql', function() {
 			expect(query('User').select({'id': 'id', 'email': 'e-mail'}).toString()).to.be.equal('SELECT `id`,`email` AS `e-mail` FROM `User`');
 		});
 
-		it('shoud throw an exception when no query type is specified', function() {
+		it('should return sql for "delete"', function() {
+			expect(query('User').delete().toString()).to.be.equal('DELETE FROM `User`');
+		});
+
+		it('should return sql for "delete" with LIMIT', function() {
+			expect(query('User').limit(10).delete().toString()).to.be.equal('DELETE FROM `User` LIMIT 10');
+		});
+
+		it('should return sql for "insert"', function() {
+			expect(query('User').insert({ email: 'example@example.com' }).toString()).to.be.equal('INSERT INTO `User` (`email`) VALUES("example@example.com")');
+		});
+
+		it('should return sql for multi "insert"', function() {
+			expect(query('User').insert(
+				{ id: 1, email: 'example@example.com' },
+				{ id: 2, email: 'second@example.com'}).toString())
+			.to.be.equal('INSERT INTO `User` (`id`,`email`) VALUES(1,"example@example.com"),(2,"second@example.com")');
+		});
+
+		it('should throw an exception when no query type is specified', function() {
 			var q = query('User');
 			expect(q.toString.bind(q)).to.throw(Error);
 		});
