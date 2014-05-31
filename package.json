@@ -3,6 +3,9 @@
 	"version": "0.1.0",
 	"description": "db-kit query builder",
 	"main": "index.js",
+	"dependencies": {
+		"lodash": "2.4.1"
+	},
 	"devDependencies": {
 		"mocha": "1.20.x",
 		"chai": "1.9.x"
