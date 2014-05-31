@@ -192,4 +192,25 @@ describe('query.mysql', function() {
 
 	});
 
+	describe('#toString()', function() {
+
+		it('should return sql for "select *"', function() {
+			expect(query('User').select().toString()).to.be.equal('SELECT * FROM `User`');
+		});
+
+		it('should return sql for "select" with column names', function() {
+			expect(query('User').select('id', 'email').toString()).to.be.equal('SELECT `id`,`email` FROM `User`');
+		});
+
+		it('should return sql for "select" with column name aliases', function() {
+			expect(query('User').select({'id': 'id', 'email': 'e-mail'}).toString()).to.be.equal('SELECT `id`,`email` AS `e-mail` FROM `User`');
+		});
+
+		it('shoud throw an exception when no query type is specified', function() {
+			var q = query('User');
+			expect(q.toString.bind(q)).to.throw(Error);
+		});
+
+	});
+
 });
