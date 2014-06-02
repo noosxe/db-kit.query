@@ -220,6 +220,40 @@ describe('query.mysql', function() {
 
 	});
 
+	describe('#asc()', function() {
+
+		it('should append ASC by [column] to ordering list', function() {
+			expect(query('User').asc('age')._orderBy)
+			.to.be.deep.equal([
+				{ column: 'age', order: 'ASC' }
+			]);
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.asc('age'))
+			.to.be.equal(q);
+		});
+
+	});
+
+	describe('#desc()', function() {
+
+		it('should append DESC by [column] to ordering list', function() {
+			expect(query('User').desc('age')._orderBy)
+			.to.be.deep.equal([
+				{ column: 'age', order: 'DESC' }
+			]);
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.desc('age'))
+			.to.be.equal(q);
+		});
+
+	});
+
 	describe('#ifExists()', function() {
 
 		it('should set ._ifExists to true', function() {
@@ -467,6 +501,11 @@ describe('query.mysql', function() {
 			.to.be.equal('SELECT `id`,`email` AS `e-mail` FROM `User` LIMIT 10 OFFSET 10');
 		});
 
+		it('should return sql for "select" with ORDER BY', function() {
+			expect(query('User').desc('age').asc('weight').select('id', 'name').toString())
+			.to.be.equal('SELECT `id`,`name` FROM `User` ORDER BY `age` DESC,`weight` ASC');
+		});
+
 		it('should return sql for "delete"', function() {
 			expect(query('User').delete().toString())
 			.to.be.equal('DELETE FROM `User`');
@@ -475,6 +514,11 @@ describe('query.mysql', function() {
 		it('should return sql for "delete" with LIMIT', function() {
 			expect(query('User').limit(10).delete().toString())
 			.to.be.equal('DELETE FROM `User` LIMIT 10');
+		});
+
+		it('should return sql for "delete" with ORDER BY and LIMIT', function() {
+			expect(query('User').desc('age').asc('weight').limit(10).delete().toString())
+			.to.be.equal('DELETE FROM `User` ORDER BY `age` DESC,`weight` ASC LIMIT 10');
 		});
 
 		it('should return sql for "insert"', function() {
@@ -497,6 +541,11 @@ describe('query.mysql', function() {
 		it('should return sql for "update" with LIMIT', function() {
 			expect(query('User').limit(10).update({ email: 'example@example.com' }).toString())
 			.to.be.equal('UPDATE `User` SET `email` = "example@example.com" LIMIT 10');
+		});
+
+		it('should return sql for "update" with ORDER BY and LIMIT', function() {
+			expect(query('User').desc('age').asc('weight').limit(10).update({ email: 'example@example.com' }).toString())
+			.to.be.equal('UPDATE `User` SET `email` = "example@example.com" ORDER BY `age` DESC,`weight` ASC LIMIT 10');
 		});
 
 		it('should return sql for "createTable"', function() {
