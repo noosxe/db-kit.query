@@ -333,6 +333,30 @@ describe('query.mysql', function() {
 			.to.be.equal('TEXT NOT NULL DEFAULT "hello, world!"');
 		});
 
+		it('should parse autoincrement columns', function() {
+			expect(query('User')._typeFor({
+				type: 'int',
+				autoIncrement: true
+			}))
+			.to.be.equal('INT NOT NULL AUTO_INCREMENT');
+		});
+
+		it('should parse unique key columns', function() {
+			expect(query('User')._typeFor({
+				type: 'int',
+				unique: true
+			}))
+			.to.be.equal('INT NOT NULL UNIQUE');
+		});
+
+		it('should parse primary key columns', function() {
+			expect(query('User')._typeFor({
+				type: 'int',
+				primary: true
+			}))
+			.to.be.equal('INT NOT NULL PRIMARY KEY');
+		});
+
 	});
 
 	describe('#dropTable()', function() {
