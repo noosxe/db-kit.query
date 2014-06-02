@@ -265,6 +265,59 @@ describe('query.mysql', function() {
 
 	});
 
+	describe('#addColumn()', function() {
+
+		it('should add column object to columns list', function() {
+			expect(query('User').addColumn({
+				name: 'email',
+				type: 'string',
+				length: 100
+			}).tableColumns).to.be.deep.equal({
+				email: { type: 'string', length: 100 }
+			});
+		});
+
+		it('should throw an error if no column name is specified', function() {
+			var q = query('User');
+			expect(q.addColumn.bind(q, {
+				type: 'string'
+			})).to.throw(Error);
+		});
+
+		it('should throw an error if no column type is specified', function() {
+			var q = query('User');
+			expect(q.addColumn.bind(q, {
+				name: 'email'
+			})).to.throw(Error);
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.addColumn({
+				name: 'email',
+				type: 'string',
+				length: 100
+			}))
+			.to.be.equal(q);
+		});
+
+	});
+
+	describe('#createTable()', function() {
+
+		it('should set query type to "createTable"', function() {
+			expect(query('User').createTable()._type)
+			.to.be.equal('createTable');
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.createTable())
+			.to.be.equal(q);
+		});
+
+	});
+
 	describe('#truncate()', function() {
 
 		it('should set query type to "truncate"', function() {
@@ -332,6 +385,22 @@ describe('query.mysql', function() {
 		it('should return sql for "update" with LIMIT', function() {
 			expect(query('User').limit(10).update({ email: 'example@example.com' }).toString())
 			.to.be.equal('UPDATE `User` SET `email` = "example@example.com" LIMIT 10');
+		});
+
+		it('should return sql for "createTable"', function() {
+			expect(query('User').addColumn({
+				name: 'email',
+				type: 'string',
+				length: 100
+			}).createTable().toString()).to.be.equal('CREATE TABLE `User` (`email` VARCHAR(100))');
+		});
+
+		it('should return sql for "createTable" with IF NOT EXISTS', function() {
+			expect(query('User').addColumn({
+				name: 'email',
+				type: 'string',
+				length: 100
+			}).ifNotExists().createTable().toString()).to.be.equal('CREATE TABLE IF NOT EXISTS `User` (`email` VARCHAR(100))');
 		});
 
 		it('should return sql for "dropTable"', function() {
