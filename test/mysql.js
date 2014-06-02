@@ -317,6 +317,22 @@ describe('query.mysql', function() {
 			.to.be.equal('INT');
 		});
 
+		it('should parse default values', function() {
+			expect(query('User')._typeFor({
+				type: 'int',
+				default: 10
+			}))
+			.to.be.equal('INT NOT NULL DEFAULT 10');
+		});
+
+		it('should parse default values', function() {
+			expect(query('User')._typeFor({
+				type: 'text',
+				default: 'hello, world!'
+			}))
+			.to.be.equal('TEXT NOT NULL DEFAULT "hello, world!"');
+		});
+
 	});
 
 	describe('#dropTable()', function() {
