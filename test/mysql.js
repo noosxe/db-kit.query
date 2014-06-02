@@ -250,6 +250,67 @@ describe('query.mysql', function() {
 
 	});
 
+	describe('#_typeFor()', function() {
+
+		it('should parse "string" type with default length', function() {
+			expect(query('User')._typeFor({
+				type: 'string'
+			}))
+			.to.be.equal('VARCHAR(255)');
+		});
+
+		it('should parse "string" type with given length', function() {
+			expect(query('User')._typeFor({
+				type: 'string',
+				length: 100
+			}))
+			.to.be.equal('VARCHAR(100)');
+		});
+
+		it('should parse "text" type', function() {
+			expect(query('User')._typeFor({
+				type: 'text'
+			}))
+			.to.be.equal('TEXT');
+		});
+
+		it('should parse "int" type', function() {
+			expect(query('User')._typeFor({
+				type: 'int'
+			}))
+			.to.be.equal('INT');
+		});
+
+		it('should parse "double" type', function() {
+			expect(query('User')._typeFor({
+				type: 'double'
+			}))
+			.to.be.equal('DOUBLE');
+		});
+
+		it('should parse "bool" type', function() {
+			expect(query('User')._typeFor({
+				type: 'bool'
+			}))
+			.to.be.equal('BOOL');
+		});
+
+		it('should parse "date" type', function() {
+			expect(query('User')._typeFor({
+				type: 'date'
+			}))
+			.to.be.equal('DATE');
+		});
+
+		it('should parse "timestamp" type', function() {
+			expect(query('User')._typeFor({
+				type: 'timestamp'
+			}))
+			.to.be.equal('TIMESTAMP');
+		});
+
+	});
+
 	describe('#dropTable()', function() {
 
 		it('should set query type to "dropTable"', function() {
@@ -272,7 +333,8 @@ describe('query.mysql', function() {
 				name: 'email',
 				type: 'string',
 				length: 100
-			}).tableColumns).to.be.deep.equal({
+			}).tableColumns)
+			.to.be.deep.equal({
 				email: { type: 'string', length: 100 }
 			});
 		});
@@ -281,14 +343,16 @@ describe('query.mysql', function() {
 			var q = query('User');
 			expect(q.addColumn.bind(q, {
 				type: 'string'
-			})).to.throw(Error);
+			}))
+			.to.throw(Error);
 		});
 
 		it('should throw an error if no column type is specified', function() {
 			var q = query('User');
 			expect(q.addColumn.bind(q, {
 				name: 'email'
-			})).to.throw(Error);
+			}))
+			.to.throw(Error);
 		});
 
 		it('should return chaining object', function() {
@@ -392,7 +456,8 @@ describe('query.mysql', function() {
 				name: 'email',
 				type: 'string',
 				length: 100
-			}).createTable().toString()).to.be.equal('CREATE TABLE `User` (`email` VARCHAR(100))');
+			}).createTable().toString())
+			.to.be.equal('CREATE TABLE `User` (`email` VARCHAR(100)) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB');
 		});
 
 		it('should return sql for "createTable" with IF NOT EXISTS', function() {
@@ -400,19 +465,23 @@ describe('query.mysql', function() {
 				name: 'email',
 				type: 'string',
 				length: 100
-			}).ifNotExists().createTable().toString()).to.be.equal('CREATE TABLE IF NOT EXISTS `User` (`email` VARCHAR(100))');
+			}).ifNotExists().createTable().toString())
+			.to.be.equal('CREATE TABLE IF NOT EXISTS `User` (`email` VARCHAR(100)) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB');
 		});
 
 		it('should return sql for "dropTable"', function() {
-			expect(query('User').dropTable().toString()).to.be.equal('DROP TABLE `User`');
+			expect(query('User').dropTable().toString())
+			.to.be.equal('DROP TABLE `User`');
 		});
 
 		it('should return sql for "dropTable" with ifExists', function() {
-			expect(query('User').ifExists().dropTable().toString()).to.be.equal('DROP TABLE IF EXISTS `User`');
+			expect(query('User').ifExists().dropTable().toString())
+			.to.be.equal('DROP TABLE IF EXISTS `User`');
 		});
 
 		it('should return sql for "truncate"', function() {
-			expect(query('User').truncate().toString()).to.be.equal('TRUNCATE TABLE `User`');
+			expect(query('User').truncate().toString())
+			.to.be.equal('TRUNCATE TABLE `User`');
 		});
 
 		it('should throw an exception when no query type is specified', function() {
