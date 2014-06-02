@@ -256,7 +256,7 @@ describe('query.mysql', function() {
 			expect(query('User')._typeFor({
 				type: 'string'
 			}))
-			.to.be.equal('VARCHAR(255)');
+			.to.be.equal('VARCHAR(255) NOT NULL');
 		});
 
 		it('should parse "string" type with given length', function() {
@@ -264,49 +264,57 @@ describe('query.mysql', function() {
 				type: 'string',
 				length: 100
 			}))
-			.to.be.equal('VARCHAR(100)');
+			.to.be.equal('VARCHAR(100) NOT NULL');
 		});
 
 		it('should parse "text" type', function() {
 			expect(query('User')._typeFor({
 				type: 'text'
 			}))
-			.to.be.equal('TEXT');
+			.to.be.equal('TEXT NOT NULL');
 		});
 
 		it('should parse "int" type', function() {
 			expect(query('User')._typeFor({
 				type: 'int'
 			}))
-			.to.be.equal('INT');
+			.to.be.equal('INT NOT NULL');
 		});
 
 		it('should parse "double" type', function() {
 			expect(query('User')._typeFor({
 				type: 'double'
 			}))
-			.to.be.equal('DOUBLE');
+			.to.be.equal('DOUBLE NOT NULL');
 		});
 
 		it('should parse "bool" type', function() {
 			expect(query('User')._typeFor({
 				type: 'bool'
 			}))
-			.to.be.equal('BOOL');
+			.to.be.equal('BOOL NOT NULL');
 		});
 
 		it('should parse "date" type', function() {
 			expect(query('User')._typeFor({
 				type: 'date'
 			}))
-			.to.be.equal('DATE');
+			.to.be.equal('DATE NOT NULL');
 		});
 
 		it('should parse "timestamp" type', function() {
 			expect(query('User')._typeFor({
 				type: 'timestamp'
 			}))
-			.to.be.equal('TIMESTAMP');
+			.to.be.equal('TIMESTAMP NOT NULL');
+		});
+
+		it('should parse optional columns', function() {
+			expect(query('User')._typeFor({
+				type: 'int',
+				optional: true
+			}))
+			.to.be.equal('INT');
 		});
 
 	});
@@ -457,7 +465,7 @@ describe('query.mysql', function() {
 				type: 'string',
 				length: 100
 			}).createTable().toString())
-			.to.be.equal('CREATE TABLE `User` (`email` VARCHAR(100)) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB');
+			.to.be.equal('CREATE TABLE `User` (`email` VARCHAR(100) NOT NULL) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB');
 		});
 
 		it('should return sql for "createTable" with IF NOT EXISTS', function() {
@@ -466,7 +474,19 @@ describe('query.mysql', function() {
 				type: 'string',
 				length: 100
 			}).ifNotExists().createTable().toString())
-			.to.be.equal('CREATE TABLE IF NOT EXISTS `User` (`email` VARCHAR(100)) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB');
+			.to.be.equal('CREATE TABLE IF NOT EXISTS `User` (`email` VARCHAR(100) NOT NULL) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB');
+		});
+
+		it('should return sql for "createTable" with multiple columns', function() {
+			expect(query('User').addColumn({
+				name: 'email',
+				type: 'string',
+				length: 100
+			}).addColumn({
+				name: 'bio',
+				type: 'text'
+			}).createTable().toString())
+			.to.be.equal('CREATE TABLE `User` (`email` VARCHAR(100) NOT NULL,`bio` TEXT NOT NULL) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB');
 		});
 
 		it('should return sql for "dropTable"', function() {
