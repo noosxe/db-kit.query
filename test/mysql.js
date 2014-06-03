@@ -319,9 +319,14 @@ describe('query.mysql', function() {
 		});
 
 		it('should accept function for nested expressions', function() {
-			expect(typeof query('User').where(function() {
-				this.where(id, 1);
-			})._where[0]).to.be.equal('function');
+			expect(query('User').where(function() {
+				this.where('id', 1);
+			})._where)
+			.to.be.deep.equal([
+				{ type: 'openSub' },
+				{ type: 'operation', column: 'id', operator: '=', value: 1 },
+				{ type: 'closeSub' }
+			]);
 		});
 
 		it('should return chaining object', function() {
@@ -387,7 +392,14 @@ describe('query.mysql', function() {
 		});
 
 		it('should generate sql for "where" + "orWhere"', function() {
-			expect(query('User').where('id', 1).orWhere('age', 20)._genWhere()).to.be.equal('WHERE `id` = 1 OR `age` = 20');
+			expect(query('User').where('id', 1).orWhere({ age: 20, height: { gt: 30 }})._genWhere()).to.be.equal('WHERE `id` = 1 OR `age` = 20 AND `height` > 30');
+		});
+
+		it('should generate sql for "where" with parens', function() {
+			expect(query('User').where(function() {
+				this.where('id', 1).orWhere('id', 2);
+			}).andWhere('age', 30)._genWhere())
+			.to.be.equal('WHERE (`id` = 1 OR `id` = 2) AND `age` = 30');
 		});
 	});
 
