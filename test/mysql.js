@@ -368,6 +368,29 @@ describe('query.mysql', function() {
 
 	});
 
+	describe('#_genWhere()', function() {
+
+		it('should generate sql for single equality comparison', function() {
+			expect(query('User').where('id', 1)._genWhere()).to.be.equal('WHERE `id` = 1');
+		});
+
+		it('should generate sql for multiple', function() {
+			expect(query('User').where({ id: 1, age: 20 })._genWhere()).to.be.equal('WHERE `id` = 1 AND `age` = 20');
+		});
+
+		it('should generate sql for multiple with inequality operators', function() {
+			expect(query('User').where({ id: { gt:1 }, age: { lte:20 } })._genWhere()).to.be.equal('WHERE `id` > 1 AND `age` <= 20');
+		});
+
+		it('should generate sql for "where" + "andWhere"', function() {
+			expect(query('User').where('id', 1).andWhere('age', 20)._genWhere()).to.be.equal('WHERE `id` = 1 AND `age` = 20');
+		});
+
+		it('should generate sql for "where" + "orWhere"', function() {
+			expect(query('User').where('id', 1).orWhere('age', 20)._genWhere()).to.be.equal('WHERE `id` = 1 OR `age` = 20');
+		});
+	});
+
 	describe('#_typeFor()', function() {
 
 		it('should parse "string" type with default length', function() {
