@@ -284,6 +284,90 @@ describe('query.mysql', function() {
 
 	});
 
+	describe('#where()', function() {
+
+		it('should accept column equality arguments', function() {
+			expect(query('User').where('id', 1)._where)
+			.to.be.deep.equal([
+				{ type: 'operation', column: 'id', operator: '=', value: 1 }
+			]);
+		});
+
+		it('should accept object as where describer', function() {
+			expect(query('User').where({ id: 1, age: 13 })._where)
+			.to.be.deep.equal([
+				{ type: 'operation', column: 'id', operator: '=', value: 1 },
+				{ type: 'connector', operator: 'AND' },
+				{ type: 'operation', column: 'age', operator: '=', value: 13 }
+			]);
+		});
+
+		it('should accept object as where describer with comparison', function() {
+			expect(query('User').where({ id: { gt: 1 }, age: { lt: 13 } })._where)
+				.to.be.deep.equal([
+					{ type: 'operation', column: 'id', operator: '>', value: 1 },
+					{ type: 'connector', operator: 'AND' },
+					{ type: 'operation', column: 'age', operator: '<', value: 13 }
+				]);
+		});
+
+		it('should throw an error when unknown comparison operator is provided', function() {
+			var q = query('User');
+
+			expect(q.where.bind(q, { id: { gts: 1 }, age: { lt: 13 } }))
+			.to.throw(Error);
+		});
+
+		it('should accept function for nested expressions', function() {
+			expect(typeof query('User').where(function() {
+				this.where(id, 1);
+			})._where[0]).to.be.equal('function');
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.where('id', 1))
+			.to.be.equal(q);
+		});
+
+	});
+
+	describe('#andWhere()', function() {
+
+		it('should accept column equality arguments', function() {
+			expect(query('User').andWhere('id', 1)._where)
+			.to.be.deep.equal([
+				{ type: 'connector', operator: 'AND' },
+				{ type: 'operation', column: 'id', operator: '=', value: 1 }
+			]);
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.andWhere('id', 1))
+			.to.be.equal(q);
+		});
+
+	});
+
+	describe('#orWhere()', function() {
+
+		it('should accept column equality arguments', function() {
+			expect(query('User').orWhere('id', 1)._where)
+			.to.be.deep.equal([
+				{ type: 'connector', operator: 'OR' },
+				{ type: 'operation', column: 'id', operator: '=', value: 1 }
+			]);
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.orWhere('id', 1))
+			.to.be.equal(q);
+		});
+
+	});
+
 	describe('#_typeFor()', function() {
 
 		it('should parse "string" type with default length', function() {
