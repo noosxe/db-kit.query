@@ -598,6 +598,78 @@ describe('query.mysql', function() {
 
 	});
 
+	describe('#join()', function() {
+
+		it('should append a join to ._joins variable with "inner" type', function() {
+			expect(query('User').join('Project')._joins)
+			.to.be.deep.equal([
+				{ type: 'inner', tableName: 'Project' }
+			]);
+		});
+
+		it('should append a join to ._joins variable with "inner" type with alias', function() {
+			expect(query('User').join('Project', 'p')._joins)
+			.to.be.deep.equal([
+				{ type: 'inner', tableName: 'Project', alias: 'p' }
+			]);
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.join())
+			.to.be.equal(q);
+		});
+
+	});
+
+	describe('#leftJoin()', function() {
+
+		it('should append a join to ._joins variable with "left" type', function() {
+			expect(query('User').leftJoin('Project')._joins)
+			.to.be.deep.equal([
+				{ type: 'left', tableName: 'Project' }
+			]);
+		});
+
+		it('should append a join to ._joins variable with "left" type with alias', function() {
+			expect(query('User').leftJoin('Project', 'p')._joins)
+			.to.be.deep.equal([
+				{ type: 'left', tableName: 'Project', alias: 'p' }
+			]);
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.leftJoin())
+			.to.be.equal(q);
+		});
+
+	});
+
+	describe('#rightJoin()', function() {
+
+		it('should append a join to ._joins variable with "right" type', function() {
+			expect(query('User').rightJoin('Project')._joins)
+			.to.be.deep.equal([
+				{ type: 'right', tableName: 'Project' }
+			]);
+		});
+
+		it('should append a join to ._joins variable with "right" type with alias', function() {
+			expect(query('User').rightJoin('Project', 'p')._joins)
+			.to.be.deep.equal([
+				{ type: 'right', tableName: 'Project', alias: 'p' }
+			]);
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.rightJoin())
+			.to.be.equal(q);
+		});
+
+	});
+
 	describe('#toString()', function() {
 
 		it('should return sql for "select *"', function() {
