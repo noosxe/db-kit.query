@@ -625,6 +625,16 @@ describe('query.mysql', function() {
 			.to.be.equal('SELECT `id`,`name` FROM `User` ORDER BY `age` DESC,`weight` ASC');
 		});
 
+		it('should return sql for "select" with WHERE', function() {
+			expect(query('User').where('id', 1).select().toString())
+			.to.be.equal('SELECT * FROM `User` WHERE `id` = 1');
+		});
+
+		it('should return sql for "select" with complex WHERE', function() {
+			expect(query('User').where({ age: { gt: 18, lt: 30 } }).select().toString())
+			.to.be.equal('SELECT * FROM `User` WHERE `age` > 18 AND `age` < 30');
+		});
+
 		it('should return sql for "delete"', function() {
 			expect(query('User').delete().toString())
 			.to.be.equal('DELETE FROM `User`');
@@ -638,6 +648,11 @@ describe('query.mysql', function() {
 		it('should return sql for "delete" with ORDER BY and LIMIT', function() {
 			expect(query('User').desc('age').asc('weight').limit(10).delete().toString())
 			.to.be.equal('DELETE FROM `User` ORDER BY `age` DESC,`weight` ASC LIMIT 10');
+		});
+
+		it('should return sql for "delete" with WHERE', function() {
+			expect(query('User').where('id', 1).delete().toString())
+			.to.be.equal('DELETE FROM `User` WHERE `id` = 1');
 		});
 
 		it('should return sql for "insert"', function() {
@@ -665,6 +680,11 @@ describe('query.mysql', function() {
 		it('should return sql for "update" with ORDER BY and LIMIT', function() {
 			expect(query('User').desc('age').asc('weight').limit(10).update({ email: 'example@example.com' }).toString())
 			.to.be.equal('UPDATE `User` SET `email` = "example@example.com" ORDER BY `age` DESC,`weight` ASC LIMIT 10');
+		});
+
+		it('should return sql for "update" with WHERE', function() {
+			expect(query('User').where('id', 1).update({ email: 'example@example.com' }).toString())
+			.to.be.equal('UPDATE `User` SET `email` = "example@example.com" WHERE `id` = 1');
 		});
 
 		it('should return sql for "createTable"', function() {
