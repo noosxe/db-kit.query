@@ -832,6 +832,16 @@ describe('query.mysql', function() {
 			.to.be.equal('JOIN `Project` ON `User`.`id` = `Project`.`owner`');
 		});
 
+		it('should return sql for join with multiple constraints', function() {
+			expect(query('User').join('Project').on('User.id', 'Project.owner').andOn('User.id', 'Project.owner')._genJoin())
+			.to.be.equal('JOIN `Project` ON `User`.`id` = `Project`.`owner` AND `User`.`id` = `Project`.`owner`');
+		});
+
+		it('should return sql for multiple joins', function() {
+			expect(query('User').join('Project').on('User.id', 'Project.owner').leftJoin('Schedule').on('User.id', 'Schedule.userid')._genJoin())
+			.to.be.equal('JOIN `Project` ON `User`.`id` = `Project`.`owner` LEFT JOIN `Schedule` ON `User`.`id` = `Schedule`.`userid`');
+		});
+
 	});
 
 	describe('#toString()', function() {
