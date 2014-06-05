@@ -614,6 +614,30 @@ describe('query.mysql', function() {
 			]);
 		});
 
+		it('should append existing "on" constraints from ._currentOn to ._on', function() {
+			expect(query('User').join('Project').on('User.id', 'Project.owner')
+													.join('Schedule').on('User.id', 'Schedule.userId')._on)
+			.to.be.deep.equal([
+				[{
+					type: 'operation',
+					column: 'User.id',
+					operator: '=',
+					value: 'Project.owner'
+				}]
+			]);
+
+			expect(query('User').join('Project').on('User.id', 'Project.owner')
+													.join('Schedule').on('User.id', 'Schedule.userId')._currentOn)
+			.to.be.deep.equal([
+				{
+					type: 'operation',
+					column: 'User.id',
+					operator: '=',
+					value: 'Schedule.userId'
+				}
+			]);
+		});
+
 		it('should return chaining object', function() {
 			var q = query('User');
 			expect(q.join())
@@ -635,6 +659,30 @@ describe('query.mysql', function() {
 			expect(query('User').leftJoin('Project', 'p')._joins)
 			.to.be.deep.equal([
 				{ type: 'left', tableName: 'Project', alias: 'p' }
+			]);
+		});
+
+		it('should append existing "on" constraints from ._currentOn to ._on', function() {
+			expect(query('User').join('Project').on('User.id', 'Project.owner')
+													.leftJoin('Schedule').on('User.id', 'Schedule.userId')._on)
+			.to.be.deep.equal([
+				[{
+					type: 'operation',
+					column: 'User.id',
+					operator: '=',
+					value: 'Project.owner'
+				}]
+			]);
+
+			expect(query('User').join('Project').on('User.id', 'Project.owner')
+													.leftJoin('Schedule').on('User.id', 'Schedule.userId')._currentOn)
+			.to.be.deep.equal([
+				{
+					type: 'operation',
+					column: 'User.id',
+					operator: '=',
+					value: 'Schedule.userId'
+				}
 			]);
 		});
 
@@ -662,9 +710,111 @@ describe('query.mysql', function() {
 			]);
 		});
 
+		it('should append existing "on" constraints from ._currentOn to ._on', function() {
+			expect(query('User').join('Project').on('User.id', 'Project.owner')
+													.rightJoin('Schedule').on('User.id', 'Schedule.userId')._on)
+			.to.be.deep.equal([
+				[{
+					type: 'operation',
+					column: 'User.id',
+					operator: '=',
+					value: 'Project.owner'
+				}]
+			]);
+
+			expect(query('User').join('Project').on('User.id', 'Project.owner')
+													.rightJoin('Schedule').on('User.id', 'Schedule.userId')._currentOn)
+			.to.be.deep.equal([
+				{
+					type: 'operation',
+					column: 'User.id',
+					operator: '=',
+					value: 'Schedule.userId'
+				}
+			]);
+		});
+
 		it('should return chaining object', function() {
 			var q = query('User');
 			expect(q.rightJoin())
+			.to.be.equal(q);
+		});
+
+	});
+
+	describe('#on()', function() {
+
+		it('should append "on" constraint to ._on variable', function() {
+			expect(query('User').on('User.id', 'Project.owner')._currentOn)
+			.to.be.deep.equal([
+				{
+					type: 'operation',
+					column: 'User.id',
+					operator: '=',
+					value: 'Project.owner'
+				}
+			]);
+		});
+
+		it('should accept object as "on" describer', function() {
+			expect(query('User').on({ 'User.id': 'Project.owner', 'User.age': 18 })._currentOn)
+			.to.be.deep.equal([
+				{ type: 'operation', column: 'User.id', operator: '=', value: 'Project.owner' },
+				{ type: 'connector', operator: 'AND' },
+				{ type: 'operation', column: 'User.age', operator: '=', value: 18 }
+			]);
+		});
+
+		it('should accept object as "on" describer with comparison', function() {
+			expect(query('User').on({ id: { gt: 1 }, age: { lt: 13 } })._currentOn)
+				.to.be.deep.equal([
+					{ type: 'operation', column: 'id', operator: '>', value: 1 },
+					{ type: 'connector', operator: 'AND' },
+					{ type: 'operation', column: 'age', operator: '<', value: 13 }
+				]);
+		});
+
+		it('should throw an error when unknown comparison operator is provided', function() {
+			var q = query('User');
+
+			expect(q.on.bind(q, { id: { gts: 1 }, age: { lt: 13 } }))
+			.to.throw(Error);
+		});
+
+		it('should accept function for nested expressions', function() {
+			expect(query('User').on(function() {
+				this.on('id', 1);
+			})._currentOn)
+			.to.be.deep.equal([
+				{ type: 'openSub' },
+				{ type: 'operation', column: 'id', operator: '=', value: 1 },
+				{ type: 'closeSub' }
+			]);
+		});
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.on())
+			.to.be.equal(q);
+		});
+
+	});
+
+	describe('#andOn()', function() {
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.andOn())
+			.to.be.equal(q);
+		});
+
+	});
+
+	describe('#orOn()', function() {
+
+		it('should return chaining object', function() {
+			var q = query('User');
+			expect(q.orOn())
 			.to.be.equal(q);
 		});
 
