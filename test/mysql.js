@@ -820,6 +820,20 @@ describe('query.mysql', function() {
 
 	});
 
+	describe('#_genJoin()', function() {
+
+		it('should return empty string when no joins appended', function() {
+			expect(query('User')._genJoin())
+			.to.be.equal('');
+		});
+
+		it('should return sql for simple join', function() {
+			expect(query('User').join('Project').on('User.id', 'Project.owner')._genJoin())
+			.to.be.equal('JOIN `Project` ON `User`.`id` = `Project`.`owner`');
+		});
+
+	});
+
 	describe('#toString()', function() {
 
 		it('should return sql for "select *"', function() {
@@ -855,6 +869,11 @@ describe('query.mysql', function() {
 		it('should return sql for "select" with complex WHERE', function() {
 			expect(query('User').where({ age: { gt: 18, lt: 30 } }).select().toString())
 			.to.be.equal('SELECT * FROM `User` WHERE `age` > 18 AND `age` < 30');
+		});
+
+		it('should return sql for "select" with simple "join"', function() {
+			expect(query('User').join('Project').on('User.id', 'Project.owner').select().toString())
+			.to.be.equal('SELECT * FROM `User` JOIN `Project` ON `User`.`id` = `Project`.`owner`');
 		});
 
 		it('should return sql for "delete"', function() {
