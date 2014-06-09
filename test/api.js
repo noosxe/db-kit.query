@@ -17,4 +17,4 @@ describe('query', function() {
 
 	});
 
-})
+});

@@ -7,8 +7,8 @@
 		"lodash": "2.4.1"
 	},
 	"devDependencies": {
-		"mocha": "1.20.x",
-		"chai": "1.9.x"
+		"chai": "1.9.x",
+		"mocha": "1.20.x"
 	},
 	"scripts": {
 		"test": "mocha -R spec"
