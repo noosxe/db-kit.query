@@ -870,6 +870,11 @@ describe('query.mysql', function() {
 			.to.be.equal('SELECT `id`,`email` FROM `User`');
 		});
 
+		it('should return sql for "select" with column name paths', function() {
+			expect(query('User').select('User.id', 'email').toString())
+					.to.be.equal('SELECT `User`.`id`,`email` FROM `User`');
+		});
+
 		it('should return sql for "select" with column name aliases', function() {
 			expect(query('User').select({'id': 'id', 'email': 'e-mail'}).toString())
 			.to.be.equal('SELECT `id`,`email` AS `e-mail` FROM `User`');
