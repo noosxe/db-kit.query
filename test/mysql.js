@@ -26,6 +26,15 @@ describe('query.mysql', function() {
 
 		});
 
+		describe('#tableAlias', function() {
+
+			it('should be equal Alias if #() called with second parameter', function() {
+				expect(query('User', 'Alias').tableAlias)
+						.to.be.equal('Alias');
+			});
+
+		});
+
 	});
 
 	describe('#_setType()', function() {
@@ -851,6 +860,11 @@ describe('query.mysql', function() {
 			.to.be.equal('SELECT * FROM `User`');
 		});
 
+		it('should return sql for "select *" with tableAlias', function() {
+			expect(query('User', 'Alias').select().toString())
+					.to.be.equal('SELECT * FROM `User` AS `Alias`');
+		});
+
 		it('should return sql for "select" with column names', function() {
 			expect(query('User').select('id', 'email').toString())
 			.to.be.equal('SELECT `id`,`email` FROM `User`');
@@ -884,6 +898,11 @@ describe('query.mysql', function() {
 		it('should return sql for "select" with simple "join"', function() {
 			expect(query('User').join('Project').on('User.id', 'Project.owner').select().toString())
 			.to.be.equal('SELECT * FROM `User` JOIN `Project` ON `User`.`id` = `Project`.`owner`');
+		});
+
+		it('should return sql for "select" with simple "join" and alias', function() {
+			expect(query('User').join('Project', 'P').on('User.id', 'P.owner').select().toString())
+					.to.be.equal('SELECT * FROM `User` JOIN `Project` AS `P` ON `User`.`id` = `P`.`owner`');
 		});
 
 		it('should return sql for "delete"', function() {
@@ -998,6 +1017,11 @@ describe('query.mysql', function() {
 				.to.be.deep.equal({ text: 'SELECT * FROM `User`', values: [] });
 		});
 
+		it('should return sql and values for "select *" with tableAlias', function() {
+			expect(query('User', 'Alias').select().toPrepared())
+					.to.be.deep.equal({ text: 'SELECT * FROM `User` AS `Alias`', values: [] });
+		});
+
 		it('should return sql for "select" with column names', function() {
 			expect(query('User').select('id', 'email').toPrepared())
 				.to.be.deep.equal({ text: 'SELECT `id`,`email` FROM `User`', values: [] });
@@ -1030,7 +1054,7 @@ describe('query.mysql', function() {
 
 		it('should return sql for "select" with simple "join"', function() {
 			expect(query('User').join('Project').on('User.id', 'Project.owner').select().toPrepared())
-				.to.be.deep.equal({ text: 'SELECT * FROM `User` JOIN `Project` ON `User`.`id` = `Project`.`owner`', values: [] });
+					.to.be.deep.equal({ text: 'SELECT * FROM `User` JOIN `Project` ON `User`.`id` = `Project`.`owner`', values: [] });
 		});
 
 		it('should return sql for "delete"', function() {
