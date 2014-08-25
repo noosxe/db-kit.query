@@ -1,6 +1,6 @@
 {
 	"name": "db-kit.query",
-	"version": "0.1.9",
+	"version": "0.1.10",
 	"description": "db-kit query builder",
 	"main": "index.js",
 	"dependencies": {
