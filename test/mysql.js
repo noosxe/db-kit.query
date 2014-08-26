@@ -873,27 +873,27 @@ describe('query.mysql', function() {
 
 		it('should return sql for "select" with column names', function() {
 			expect(query('User').select('id', 'email').toString())
-			.to.be.equal('SELECT `id`,`email` FROM `User`');
+			.to.be.equal('SELECT `id` AS `id`,`email` AS `email` FROM `User`');
 		});
 
 		it('should return sql for "select" with column name paths', function() {
 			expect(query('User').select('User.id', 'email').toString())
-					.to.be.equal('SELECT `User`.`id`,`email` FROM `User`');
+					.to.be.equal('SELECT `User`.`id` AS `User.id`,`email` AS `email` FROM `User`');
 		});
 
 		it('should return sql for "select" with column name aliases', function() {
 			expect(query('User').select({'id': 'id', 'email': 'e-mail'}).toString())
-			.to.be.equal('SELECT `id`,`email` AS `e-mail` FROM `User`');
+			.to.be.equal('SELECT `id` AS `id`,`email` AS `e-mail` FROM `User`');
 		});
 
 		it('should return sql for "select" with LIMIT and OFFSET', function() {
 			expect(query('User').limit(10).offset(10).select({'id': 'id', 'email': 'e-mail'}).toString())
-			.to.be.equal('SELECT `id`,`email` AS `e-mail` FROM `User` LIMIT 10 OFFSET 10');
+			.to.be.equal('SELECT `id` AS `id`,`email` AS `e-mail` FROM `User` LIMIT 10 OFFSET 10');
 		});
 
 		it('should return sql for "select" with ORDER BY', function() {
 			expect(query('User').desc('age').asc('weight').select('id', 'name').toString())
-			.to.be.equal('SELECT `id`,`name` FROM `User` ORDER BY `age` DESC,`weight` ASC');
+			.to.be.equal('SELECT `id` AS `id`,`name` AS `name` FROM `User` ORDER BY `age` DESC,`weight` ASC');
 		});
 
 		it('should return sql for "select" with WHERE', function() {
@@ -1035,22 +1035,22 @@ describe('query.mysql', function() {
 
 		it('should return sql for "select" with column names', function() {
 			expect(query('User').select('id', 'email').toPrepared())
-				.to.be.deep.equal({ text: 'SELECT `id`,`email` FROM `User`', values: [] });
+				.to.be.deep.equal({ text: 'SELECT `id` AS `id`,`email` AS `email` FROM `User`', values: [] });
 		});
 
 		it('should return sql for "select" with column name aliases', function() {
 			expect(query('User').select({'id': 'id', 'email': 'e-mail'}).toPrepared())
-				.to.be.deep.equal({ text: 'SELECT `id`,`email` AS `e-mail` FROM `User`', values: [] });
+				.to.be.deep.equal({ text: 'SELECT `id` AS `id`,`email` AS `e-mail` FROM `User`', values: [] });
 		});
 
 		it('should return sql for "select" with LIMIT and OFFSET', function() {
 			expect(query('User').limit(5).offset(10).select({'id': 'id', 'email': 'e-mail'}).toPrepared())
-				.to.be.deep.equal({ text: 'SELECT `id`,`email` AS `e-mail` FROM `User` LIMIT ? OFFSET ?', values: [ 5, 10 ] });
+				.to.be.deep.equal({ text: 'SELECT `id` AS `id`,`email` AS `e-mail` FROM `User` LIMIT ? OFFSET ?', values: [ 5, 10 ] });
 		});
 
 		it('should return sql for "select" with ORDER BY', function() {
 			expect(query('User').desc('age').asc('weight').select('id', 'name').toPrepared())
-				.to.be.deep.equal({ text: 'SELECT `id`,`name` FROM `User` ORDER BY `age` DESC,`weight` ASC', values: [] });
+				.to.be.deep.equal({ text: 'SELECT `id` AS `id`,`name` AS `name` FROM `User` ORDER BY `age` DESC,`weight` ASC', values: [] });
 		});
 
 		it('should return sql for "select" with WHERE', function() {
