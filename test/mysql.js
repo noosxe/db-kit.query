@@ -312,11 +312,13 @@ describe('query.mysql', function() {
 		});
 
 		it('should accept object as where describer with comparison', function() {
-			expect(query('User').where({ id: { gt: 1 }, age: { lt: 13 } })._where)
+			expect(query('User').where({ id: { gt: 1 }, age: { lt: 13 }, name: { like: 'al%' } })._where)
 				.to.be.deep.equal([
 					{ type: 'operation', column: 'id', operator: '>', value: 1 },
 					{ type: 'connector', operator: 'AND' },
-					{ type: 'operation', column: 'age', operator: '<', value: 13 }
+					{ type: 'operation', column: 'age', operator: '<', value: 13 },
+					{ type: 'connector', operator: 'AND' },
+					{ type: 'operation', column: 'name', operator: 'LIKE', value: 'al%' },
 				]);
 		});
 
@@ -386,6 +388,10 @@ describe('query.mysql', function() {
 
 		it('should generate sql for single equality comparison', function() {
 			expect(query('User').where('id', 1)._genWhere()).to.be.equal('WHERE `id` = 1');
+		});
+
+		it('should generate sql for LIKE operator', function() {
+			expect(query('User').where({ name: { like: 'al%' } })._genWhere()).to.be.equal('WHERE `name` LIKE "al%"');
 		});
 
 		it('should generate sql for multiple', function() {
