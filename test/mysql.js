@@ -509,22 +509,6 @@ describe('query.mysql', function() {
 			.to.be.equal('INT NOT NULL AUTO_INCREMENT');
 		});
 
-		it('should parse unique key columns', function() {
-			expect(query('User')._typeFor({
-				type: 'int',
-				unique: true
-			}))
-			.to.be.equal('INT NOT NULL UNIQUE');
-		});
-
-		it('should parse primary key columns', function() {
-			expect(query('User')._typeFor({
-				type: 'int',
-				primary: true
-			}))
-			.to.be.equal('INT NOT NULL PRIMARY KEY');
-		});
-
 	});
 
 	describe('#dropTable()', function() {
@@ -975,6 +959,34 @@ describe('query.mysql', function() {
 				length: 100
 			}).createTable().toString())
 			.to.be.equal('CREATE TABLE `User` (`email` VARCHAR(100) NOT NULL) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB');
+		});
+
+		it('should return sql for "createTable" with primary field', function() {
+			expect(query('User').addColumn({
+				name: 'id',
+				type: 'int',
+				primary: true,
+				autoIncrement: true
+			}).createTable().toString())
+			.to.be.equal('CREATE TABLE `User` (`id` INT NOT NULL AUTO_INCREMENT,PRIMARY KEY (`id`)) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB');
+		});
+
+		it('should return sql for "createTable" with unique field', function() {
+			expect(query('User').addColumn({
+				name: 'id',
+				type: 'int',
+				unique: true
+			}).createTable().toString())
+			.to.be.equal('CREATE TABLE `User` (`id` INT NOT NULL,UNIQUE KEY `id` (`id`)) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB');
+		});
+
+		it('should return sql for "createTable" with index field', function() {
+			expect(query('User').addColumn({
+				name: 'id',
+				type: 'int',
+				index: true
+			}).createTable().toString())
+			.to.be.equal('CREATE TABLE `User` (`id` INT NOT NULL,KEY `id` (`id`)) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB');
 		});
 
 		it('should return sql for "createTable" with IF NOT EXISTS', function() {
