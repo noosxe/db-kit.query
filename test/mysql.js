@@ -977,7 +977,7 @@ describe('query.mysql', function() {
 				type: 'int',
 				unique: true
 			}).createTable().toString())
-			.to.be.equal('CREATE TABLE `User` (`id` INT NOT NULL,UNIQUE KEY `id` (`id`)) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB');
+			.to.be.equal('CREATE TABLE `User` (`id` INT NOT NULL,UNIQUE KEY `u_id` (`id`)) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB');
 		});
 
 		it('should return sql for "createTable" with index field', function() {
@@ -986,7 +986,19 @@ describe('query.mysql', function() {
 				type: 'int',
 				index: true
 			}).createTable().toString())
-			.to.be.equal('CREATE TABLE `User` (`id` INT NOT NULL,KEY `id` (`id`)) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB');
+			.to.be.equal('CREATE TABLE `User` (`id` INT NOT NULL,KEY `k_id` (`id`)) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB');
+		});
+
+		it('should return sql for "createTable" with reference field', function() {
+			expect(query('User').addColumn({
+				name: 'layout',
+				type: 'int'
+			}).addReference({
+				column: 'layout',
+				table: 'layout',
+				field: 'id'
+			}).createTable().toString())
+			.to.be.equal('CREATE TABLE `User` (`layout` INT NOT NULL,KEY `k_layout` (`layout`),CONSTRAINT `User_fk_layout` FOREIGN KEY (`layout`) REFERENCES `layout` (`id`)) CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB');
 		});
 
 		it('should return sql for "createTable" with IF NOT EXISTS', function() {
