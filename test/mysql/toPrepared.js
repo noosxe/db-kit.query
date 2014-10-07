@@ -48,8 +48,13 @@ describe('query.mysql', function() {
 		});
 
 		it('should return sql for "select" with simple "join"', function() {
-			expect(query('User').join('Project').on('User.id', 'Project.owner').select().toPrepared())
-					.to.be.deep.equal({ text: 'SELECT * FROM `User` JOIN `Project` ON `User`.`id` = `Project`.`owner`', values: [] });
+			expect(query('User', 'u').join('Project').on('u.id', 'Project.owner').select().toPrepared())
+				.to.be.deep.equal({ text: 'SELECT * FROM (SELECT * FROM `User` AS `u`) AS `u` JOIN `Project` ON `u`.`id` = `Project`.`owner`', values: [] });
+		});
+
+		it('should return sql for "select" with simple "join" with where', function() {
+			expect(query('User', 'u').join('Project').on('u.id', 'Project.owner').select().where('id', 1).toPrepared())
+				.to.be.deep.equal({ text: 'SELECT * FROM (SELECT * FROM `User` AS `u` WHERE `id` = ?) AS `u` JOIN `Project` ON `u`.`id` = `Project`.`owner`', values: [1] });
 		});
 
 		it('should return sql for "delete"', function() {
@@ -155,5 +160,5 @@ describe('query.mysql', function() {
 				.to.throw(Error);
 		});
 	});
-	
+
 });
